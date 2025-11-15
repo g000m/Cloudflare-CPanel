@@ -2,7 +2,7 @@
   "name": "cloudflare/cloudflare-cpanel",
   "description": "A CloudFlare plugin for CPanel",
   "license": "BSD-3-Clause",
-  "version": "7.0.1",
+  "version": "8.0.0-alpha",
   "homepage": "https://github.com/cloudflare/CloudFlare-CPanel",
   "scripts": {
     "test": "vendor/bin/phpunit src/Test",
@@ -10,18 +10,19 @@
     "format": "vendor/bin/phpcbf --standard=PSR2 --extensions=php,live.php src/"
   },
   "require": {
-    "symfony/yaml": "~2.6",
-    "guzzlehttp/guzzle": "~5.0",
-    "true/punycode": "~2.0",
-    "cloudflare/cloudflare-plugin-backend": "^2.2"
+    "php": "^7.4 || ^8.0 || ^8.1 || ^8.2 || ^8.3",
+    "symfony/yaml": "^6.0 || ^7.0",
+    "guzzlehttp/guzzle": "^7.0",
+    "true/punycode": "^2.0",
+    "psr/log": "^3.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "4.8.*",
-    "squizlabs/php_codesniffer": "2.*"
+    "phpunit/phpunit": "^10.0 || ^11.0",
+    "squizlabs/php_codesniffer": "^3.0"
   },
   "autoload": {
     "psr-4": {
       "CF\\": "src/"
     }
-}
+  }
 }
