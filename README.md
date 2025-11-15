@@ -24,6 +24,37 @@ This is a revived and modernized version of the Cloudflare cPanel integration, u
 - **Root Access**: Required for installation
 - **Cloudflare Account**: Free or paid account with API token access
 
+## 🛡️ Safety & Rollback
+
+**Testing on a production server?** We've got you covered with comprehensive backup and rollback tools:
+
+### Before Installation: Create a Backup
+```bash
+wget https://raw.githubusercontent.com/g000m/Cloudflare-CPanel/main/cloudflare.backup.sh
+bash cloudflare.backup.sh
+```
+
+This creates a complete backup with an **automatic restore script** for instant rollback.
+
+### If Something Goes Wrong: Instant Rollback
+```bash
+cd /root/cloudflare_backup_*/
+bash RESTORE.sh  # One command - back to previous state
+```
+
+### Complete Removal: Clean Uninstall
+```bash
+bash <(curl -s https://raw.githubusercontent.com/g000m/Cloudflare-CPanel/main/cloudflare.uninstall.sh)
+```
+
+**📖 Full Safety Guide:** See [ROLLBACK_GUIDE.md](ROLLBACK_GUIDE.md) for:
+- Pre-installation checklist
+- Multiple rollback strategies
+- Troubleshooting procedures
+- Emergency recovery steps
+
+**✅ Safe to test:** The plugin only modifies plugin files. Your websites, databases, and email remain untouched.
+
 ## Installation
 
 ### Quick Installation
