@@ -16,13 +16,14 @@ class DataStore implements DataStoreInterface
     const PATH_TO_YAML_FILE = '/.cpanel/datastore';
     const YAML_FILE_NAME = 'cloudflare_data.yaml';
 
-    const CLIENT_API_KEY = 'client_api_key';
+    const API_TOKEN_KEY = 'api_token';
     const EMAIL_KEY = 'cloudflare_email';
-    const HOST_USER_UNIQUE_ID_KEY = 'host_user_unique_id';
-    const HOST_USER_KEY = 'host_user_key';
 
-    //deprectated yaml file keys
-    const DEPRECATED_HOST_USER_UNIQUE_ID_KEY = 'cf_user_tokens';
+    // Deprecated keys - no longer used in v8.0+ (token-based auth)
+    // const CLIENT_API_KEY = 'client_api_key';
+    // const HOST_USER_UNIQUE_ID_KEY = 'host_user_unique_id';
+    // const HOST_USER_KEY = 'host_user_key';
+    // const DEPRECATED_HOST_USER_UNIQUE_ID_KEY = 'cf_user_tokens';
 
     /**
      * @param CpanelAPI     $cpanel
@@ -35,23 +36,6 @@ class DataStore implements DataStoreInterface
         $this->username = $this->cpanel->getUserId();
         $this->homeDir = $this->cpanel->getHomeDir();
         $this->yamlData = $this->loadYAMLFile();
-    }
-
-    /*
-     * 20160127 callHostUserLookup() and convert_deprecated_yaml_file() exist to convert the old file structure to the new one specified in
-     * createUserDataStore().  Eventually we need to remove the function below and its use in index.live.php.
-     */
-    /**
-     * @return mixed
-     */
-    public function getDeprecatedHostUserUniqueID()
-    {
-        $deprectatedHostKey = $this->get(self::DEPRECATED_HOST_USER_UNIQUE_ID_KEY);
-        if (isset($deprectatedHostKey)) {
-            return $deprectatedHostKey[$this->username];
-        }
-
-        return false;
     }
 
     /**
@@ -81,45 +65,25 @@ class DataStore implements DataStoreInterface
     }
 
     /**
-     * @param $clientApiKey
+     * @param $apiToken
      * @param $email
-     * @param $uniqueId
-     * @param $userKey
      */
-    public function createUserDataStore($clientApiKey, $email, $uniqueId, $userKey)
+    public function createUserDataStore($apiToken, $email)
     {
         $this->yamlData = array(
-            self::CLIENT_API_KEY => $clientApiKey,
+            self::API_TOKEN_KEY => $apiToken,
             self::EMAIL_KEY => $email,
-            self::HOST_USER_UNIQUE_ID_KEY => $uniqueId,
-            self::HOST_USER_KEY => $userKey,
         );
 
         $this->saveYAMLFile();
     }
 
     /**
-     * @return unique id for the current user for use in the host api
+     * @return API token for current user
      */
-    public function getHostAPIUserUniqueId()
+    public function getAPIToken()
     {
-        return $this->get(self::HOST_USER_UNIQUE_ID_KEY);
-    }
-
-    /**
-     * @return client v4 api key for current user
-     */
-    public function getClientV4APIKey()
-    {
-        return $this->get(self::CLIENT_API_KEY);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getHostAPIUserKey()
-    {
-        return $this->get(self::HOST_USER_KEY);
+        return $this->get(self::API_TOKEN_KEY);
     }
 
     /**
@@ -128,6 +92,37 @@ class DataStore implements DataStoreInterface
     public function getCloudFlareEmail()
     {
         return $this->get(self::EMAIL_KEY);
+    }
+
+    // Legacy methods - kept for backwards compatibility but deprecated
+    // These will return null for new token-based installations
+
+    /**
+     * @deprecated Use getAPIToken() instead
+     * @return null
+     */
+    public function getClientV4APIKey()
+    {
+        // For backwards compatibility with old code that may still call this
+        return null;
+    }
+
+    /**
+     * @deprecated No longer used in token-based authentication
+     * @return null
+     */
+    public function getHostAPIUserUniqueId()
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated No longer used in token-based authentication
+     * @return null
+     */
+    public function getHostAPIUserKey()
+    {
+        return null;
     }
 
     /**
