@@ -23,8 +23,8 @@ $clientAPI = new \CF\API\Client($cpanelIntegration);
 $requestRouter->addRouter($clientAPI, \CF\Cpanel\ClientV4APIRoutes::$routes);
 $pluginAPI = new \CF\API\Plugin($cpanelIntegration);
 $requestRouter->addRouter($pluginAPI, \CF\Cpanel\PluginRoutes::getRoutes(\CF\API\PluginRoutes::$routes));
-$hostAPI = new \CF\API\Host($cpanelIntegration);
-$requestRouter->addRouter($hostAPI, \CF\Cpanel\HostRoutes::$routes);
+// Token-based authentication routes (replaces deprecated Host API)
+$requestRouter->addRouter($clientAPI, \CF\Cpanel\TokenRoutes::$routes);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $parameters = $_GET;
@@ -35,7 +35,8 @@ unset($parameters['proxyURL']);
 unset($body['proxyURL']);
 $request = new \CF\API\Request($method, $path, $parameters, $body);
 
-$isCSRFTokenValid = (($request->getMethod() === 'GET') ? true : \CF\SecurityUtil::csrfTokenValidate($cpanelAPI->getHostAPIKey(), $cpanelAPI->getUserId(), $request->getBody()['cfCSRFToken']));
+// Use cPanel username for CSRF validation instead of deprecated host key
+$isCSRFTokenValid = (($request->getMethod() === 'GET') ? true : \CF\SecurityUtil::csrfTokenValidate($cpanelAPI->getUserId(), $cpanelAPI->getUserId(), $request->getBody()['cfCSRFToken']));
 unset($body['cfCSRFToken']);
 
 if ($isCSRFTokenValid) {

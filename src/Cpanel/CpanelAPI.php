@@ -217,13 +217,14 @@ class CpanelAPI implements IntegrationAPIInterface
     }
 
     /**
-     * @return host api key
-     *
-     * @throws \Exception
+     * @deprecated No longer used in token-based authentication (v8.0+)
+     * @return null
      */
     public function getHostAPIKey()
     {
-        return $this->uapi('CloudFlare', 'getHostApiKey', array(), null);
+        // Deprecated: Host API is no longer used in v8.0+
+        // Returning null for backwards compatibility
+        return null;
     }
 
     /**
